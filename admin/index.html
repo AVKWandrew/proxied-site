@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Proxied Admin</title>
+<link rel="icon" href="../assets/logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .box{background:var(--bg-2);border:2px solid var(--cyan);border-radius:var(--radius);padding:1.4rem}
+  label{display:block;font-family:var(--sub);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin:.9rem 0 .25rem}
+  input,textarea,select{width:100%;background:#2a2a2e;color:var(--text);border:2px solid #555;border-radius:10px;padding:.65rem .8rem;font:inherit}
+  input:focus,textarea:focus{outline:0;border-color:var(--cyan)}
+  input[type=checkbox]{width:auto;margin-right:.5rem}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media (max-width:560px){.row{grid-template-columns:1fr}}
+  .check{display:flex;align-items:center;font-family:var(--head);margin:.8rem 0 0;text-transform:none;letter-spacing:0;color:var(--text)}
+  .login{max-width:420px;margin:12vh auto}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem}
+  .layout{display:grid;grid-template-columns:1fr 1.1fr;gap:1.5rem;align-items:start}
+  @media (max-width:900px){.layout{grid-template-columns:1fr}}
+  .ev{display:flex;gap:.8rem;align-items:center;justify-content:space-between;background:var(--cell);border-radius:12px;padding:.7rem .9rem;margin-bottom:.6rem;flex-wrap:wrap}
+  .ev .t{font-family:var(--head);font-weight:700;text-transform:uppercase}
+  .ev .s{color:var(--muted);font-size:.9rem}
+  .badge{font-family:var(--sub);letter-spacing:.1em;font-size:.85rem;padding:.05rem .6rem;border-radius:999px;background:var(--cyan);color:#111;margin-left:.4rem}
+  .badge.off{background:#777;color:#fff}
+  .actions{display:flex;gap:.4rem;flex-wrap:wrap}
+  .banner{background:#5a4a12;color:#ffe9a6;border-radius:10px;padding:.7rem 1rem;margin-bottom:1rem}
+  .err{color:#ff8d8d;margin:.6rem 0 0;min-height:1.2em}
+  .preview{max-height:140px;border-radius:10px;margin-top:.5rem}
+</style>
+</head>
+<body>
+<div class="wrap" style="padding-block:1.5rem">
+
+  <div class="box login" id="login" hidden>
+    <img src="../assets/logo-mark.svg" alt="" style="height:90px;margin:0 auto .6rem">
+    <h2 style="text-align:center;font-size:1.6rem">Admin sign in</h2>
+    <form id="login-form">
+      <label for="em">Email</label><input id="em" type="email" autocomplete="username" required>
+      <label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password" required>
+      <p class="err" id="login-err"></p>
+      <button class="btn" style="width:100%">Sign in</button>
+    </form>
+    <p style="text-align:center"><a href="../" class="muted">← Back to site</a></p>
+  </div>
+
+  <div id="dash" hidden>
+    <div class="top">
+      <h2 style="margin:0">Event manager</h2>
+      <div class="actions"><button class="btn sm" id="tab-edit">✏️ Manage events</button><button class="btn alt sm" id="tab-cal">📅 Live calendar</button><a class="btn alt sm" href="../" target="_blank">View site</a><button class="btn alt sm" id="logout">Sign out</button></div>
+    </div>
+    <div class="banner" id="demo-banner" hidden><b>Demo mode.</b> Supabase isn't connected yet, so changes are saved only in this browser. See README.md to go live.</div>
+
+    <div class="box" id="cal-panel" hidden style="padding:.6rem">
+      <p class="muted" style="margin:.2rem .6rem .6rem;font-size:.9rem">This is exactly what visitors see (published events only). It refreshes automatically when you save a change.</p>
+      <iframe id="cal-frame" title="Live calendar" style="width:100%;height:min(1000px,80vh);border:0;border-radius:10px;background:#2b2b2e"></iframe>
+    </div>
+
+    <div class="layout" id="manage-panel">
+      <div>
+        <button class="btn" id="new" style="margin-bottom:1rem">+ New event</button>
+        <div id="list"></div>
+
+        <div class="box" style="margin-top:1.5rem">
+          <h3 style="font-size:1.2rem">Games library</h3>
+          <p class="muted" style="margin:0 0 .8rem;font-size:.9rem">Add each game once with its artwork, then pick it when creating an event. The artwork shows on the calendar and is used as the event image when no flyer is uploaded.</p>
+          <div id="games"></div>
+          <form id="game-form" style="margin-top:.8rem">
+            <label for="g-name">Game name</label><input id="g-name" required maxlength="60">
+            <label for="g-img">Game image / logo</label><input id="g-img" type="file" accept="image/*">
+            <p class="err" id="game-err"></p>
+            <button class="btn sm">+ Add game</button>
+          </form>
+        </div>
+
+        <div class="box" style="margin-top:1.5rem">
+          <h3 style="font-size:1.2rem">Store photos</h3>
+          <p class="muted" style="margin:0 0 .8rem;font-size:.9rem">Photos shown in the “Inside the shop” gallery under Find us. You can pick several at once.</p>
+          <div id="photos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:.6rem"></div>
+          <form id="photo-form" style="margin-top:.8rem">
+            <input id="p-img" type="file" accept="image/*" multiple required>
+            <p class="err" id="photo-err"></p>
+            <button class="btn sm" id="p-save">+ Upload photos</button>
+          </form>
+        </div>
+      </div>
+
+      <form class="box" id="form">
+        <h3 id="form-title" style="font-size:1.3rem">New event</h3>
+        <input type="hidden" id="f-id">
+        <label for="f-title">Title</label><input id="f-title" required maxlength="120">
+        <div class="row">
+          <div><label for="f-start">Starts</label><input id="f-start" type="datetime-local" required></div>
+          <div><label for="f-end">Ends (optional)</label><input id="f-end" type="datetime-local"></div>
+        </div>
+        <p class="muted" style="margin:.3rem 0 0;font-size:.85rem">Times are Arizona time.</p>
+        <label for="f-game">Game</label>
+        <select id="f-game"><option value="">— None —</option></select>
+        <label for="f-loc">Location (optional)</label><input id="f-loc" maxlength="160" placeholder="Leave blank for the shop">
+        <label for="f-desc">Description</label><textarea id="f-desc" rows="5" maxlength="3000"></textarea>
+        <label for="f-img">Flyer / image (optional)</label>
+        <input id="f-img" type="file" accept="image/*">
+        <img class="preview" id="f-prev" alt="" hidden>
+        <label class="check"><input type="checkbox" id="f-rep"> Repeats every week</label>
+        <div id="until-wrap" hidden><label for="f-until">Repeat until (optional)</label><input id="f-until" type="date"></div>
+        <label class="check"><input type="checkbox" id="f-feat"> ⭐ Feature in “Upcoming Events” on the homepage</label>
+        <p class="muted" style="margin:.2rem 0 0;font-size:.85rem">Off by default — every event still shows on the calendar. The Upcoming Events section only appears when at least one event is featured.</p>
+        <label class="check"><input type="checkbox" id="f-pub" checked> Published (visible on the site)</label>
+        <p class="err" id="form-err"></p>
+        <div class="actions" style="margin-top:1rem"><button class="btn" id="save">Save event</button><button type="button" class="btn alt" id="cancel">Clear</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="../js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>

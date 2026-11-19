@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Proxied — Cards, TTRPG and More</title>
+<meta name="description" content="Proxied is an Arizona game shop for trading card games, tabletop RPGs and more. See our event calendar.">
+<meta name="theme-color" content="#14101c">
+<meta property="og:title" content="Proxied — Cards, TTRPG and More">
+<meta property="og:image" content="assets/logo-full-black.png">
+<link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
+<script>document.documentElement.classList.add('js');if(/[?&]embed=1/.test(location.search))document.documentElement.classList.add('embed');</script>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+
+<!-- reusable d20 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="d20g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8d55e6"/><stop offset="1" stop-color="#2EB6AB"/></linearGradient>
+    <symbol id="d20" viewBox="0 0 100 100">
+      <polygon points="50,4 92,27 92,73 50,96 8,73 8,27" fill="url(#d20g)" stroke="#14101c" stroke-width="3.5" stroke-linejoin="round"/>
+      <polygon points="50,24 78,70 22,70" fill="rgba(20,16,28,.28)" stroke="#14101c" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M50 4V24M92 27L78 70M92 27L50 24M92 73L78 70M50 96L78 70M50 96L22 70M8 73L22 70M8 27L22 70M8 27L50 24" stroke="#14101c" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+      <text x="50" y="62" text-anchor="middle" font-family="Tango Sans,Arial Black,sans-serif" font-weight="700" font-size="19" fill="#fff">20</text>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="nav">
+  <div class="topbar"><div class="wrap" id="topbar"></div></div>
+  <div class="wrap navrow">
+    <a class="brand" href="#top"><img src="assets/logo-mark.svg" alt=""><span>PROXIED</span></a>
+    <nav><ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#events" id="nav-events">Events</a></li>
+      <li><a href="#calendar">Calendar</a></li>
+      <li><a href="#community">Community Corner</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-art" aria-hidden="true">
+        <i class="spark s1"></i><i class="spark s2"></i><i class="spark s3"></i>
+        <i class="spark s4"></i><i class="spark s5"></i>
+        <div class="logo-glow"></div>
+        <div class="logo-tilt"><div class="logo-fx"></div></div>
+      </div>
+
+      <div class="hero-copy">
+        <span class="kicker">Mesa, Arizona</span>
+        <h1 class="mega">Proxied</h1>
+        <p class="tag" id="tagline"></p>
+        <p class="lead" id="intro"></p>
+        <div class="btns"><a class="btn" href="#calendar">See the calendar</a><a class="btn alt" href="#contact">Visit the shop</a></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true"><div class="mq-track" id="mq-track"></div></div>
+
+  <section class="about" id="about">
+    <div class="wrap">
+      <div class="rv">
+        <p class="eyebrow">Who we are</p>
+        <h2>Built for <mark>players.</mark></h2>
+        <div id="about-text"></div>
+        <div class="stickers" id="pills"></div>
+      </div>
+      <div class="about-art rv">
+        <div class="blob"><div class="tile"><img src="assets/logo-mark.svg" alt="Proxied logo"></div></div>
+        <svg class="d20" viewBox="0 0 100 100" aria-hidden="true"><use href="#d20"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="events" id="events" hidden>
+    <div class="wrap">
+      <div class="rv"><p class="eyebrow">Don't miss out</p><h2 class="sec-h">Upcoming events</h2></div>
+      <div class="tcards rv" id="upcoming-list"></div>
+    </div>
+  </section>
+
+  <section class="calendar" id="calendar">
+    <div class="wrap">
+      <div class="rv"><p class="eyebrow">Plan your month</p><h2 class="sec-h">Event calendar</h2></div>
+      <div class="cal-shell rv">
+        <div class="cal-side"><span id="cal-side"></span></div>
+        <div class="cal-main">
+          <div class="cal-bar">
+            <span class="title" id="cal-title"></span>
+            <div class="nav-btns">
+              <button class="icon-btn" id="prev" aria-label="Previous month">‹</button>
+              <button class="btn sm" id="today">Today</button>
+              <button class="icon-btn" id="next" aria-label="Next month">›</button>
+            </div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+      </div>
+      <p class="cal-note">All times are Arizona time (MST). Tap an event for details.</p>
+    </div>
+  </section>
+
+  <section class="community" id="community">
+    <svg class="d20" viewBox="0 0 100 100" aria-hidden="true"><use href="#d20"/></svg>
+    <svg class="d20 two" viewBox="0 0 100 100" aria-hidden="true"><use href="#d20"/></svg>
+    <div class="wrap rv">
+      <p class="eyebrow">Players &amp; friends</p>
+      <h2 class="ghost">Community<br>Corner</h2>
+      <span class="pill">Coming soon</span>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <div class="rv">
+        <p class="eyebrow">Come hang out</p>
+        <h2 class="sec-h">Find us</h2>
+        <div id="big-addr"></div>
+      </div>
+      <div class="tickets rv" id="contact-grid"></div>
+      <div class="gal-wrap rv" id="gallery-wrap" hidden>
+        <p class="eyebrow">Take a look</p>
+        <h2 class="sec-h">Inside the shop</h2>
+        <div class="gallery" id="gallery"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="giant" aria-hidden="true">PROXIED</div>
+  <p>© <span id="year"></span> Proxied · Cards, TTRPG and more</p>
+</footer>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true">
+  <div class="sheet"><button class="x" data-close aria-label="Close">×</button><div id="sheet-body"></div></div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
