@@ -70,3 +70,13 @@ create policy "admins update event images"
 create policy "admins delete event images"
   on storage.objects for delete to authenticated
   using (bucket_id = 'event-images');
+
+-- Site settings: announcement banner + store hours (editable from the admin).
+create table if not exists public.site_settings (
+  key        text primary key,
+  value      jsonb not null,
+  updated_at timestamptz not null default now()
+);
+alter table public.site_settings enable row level security;
+create policy "public can read settings" on public.site_settings for select using (true);
+create policy "admins manage settings" on public.site_settings for all to authenticated using (true) with check (true);
