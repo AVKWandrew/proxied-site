@@ -203,7 +203,13 @@
     if (b && b.on && b.text && !(b.until && b.until < azToday())) {
       let gone = false; try { gone = sessionStorage.getItem('px_ann') === b.text; } catch (e) {}
       if (!gone) {
-        $('#announce-text').textContent = b.text; $('#announce').hidden = false;
+        const unit = `<span class="c-item">${esc(b.text)}</span><span class="c-dot" aria-hidden="true">✦</span>`;
+        const t = $('#announce-text'); $('#announce').hidden = false;
+        t.innerHTML = `<span class="sr-only">${esc(b.text)}</span><div class="crawl" aria-hidden="true"><div class="c-half">${unit}</div><div class="c-half">${unit}</div></div>`;
+        // repeat the message until one half is wider than the screen, then set a steady scroll speed
+        const crawl = t.querySelector('.crawl'), halves = crawl.querySelectorAll('.c-half');
+        let guard = 0; while (halves[0].scrollWidth < innerWidth + 40 && guard++ < 30) halves.forEach(h => h.insertAdjacentHTML('beforeend', unit));
+        crawl.style.setProperty('--dur', Math.max(12, halves[0].scrollWidth / 70) + 's');
         $('#announce-x').onclick = () => { $('#announce').hidden = true; try { sessionStorage.setItem('px_ann', b.text); } catch (e) {} };
       }
     }
