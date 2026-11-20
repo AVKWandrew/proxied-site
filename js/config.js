@@ -23,7 +23,7 @@ window.PROXIED = {
     address: '6610 E Baseline Rd Ste 107, Mesa, AZ 85206',
     mapsUrl: 'https://www.google.com/maps/search/?api=1&query=6610+E+Baseline+Rd+Ste+107+Mesa+AZ+85206',
     phone: '(480) 647-6657',
-    email: '',          // e.g. 'hello@proxied.com'
+    email: 'customersupport@proxiedllc.com',
     hours: [            // [label, hours] — leave the list empty to hide
       // ['Mon – Thu', '12pm – 9pm'],
       // ['Fri – Sat', '12pm – 11pm'],

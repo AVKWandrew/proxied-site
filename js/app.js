@@ -51,12 +51,20 @@
     $('#contact-grid').innerHTML = blocks.join('');
 
     $('#year').textContent = new Date().getFullYear();
+    const fe = $('#foot-email');
+    if (fe && shop.email) fe.innerHTML = `<a href="mailto:${esc(shop.email)}">${esc(shop.email)}</a>`;
     const tb = [];
     if (shop.address) tb.push(`<a href="${esc(shop.mapsUrl || '#contact')}" target="_blank" rel="noopener">${pinIcon} ${esc(shop.address)}</a>`);
     if (shop.phone) tb.push(`<a href="tel:${esc(shop.phone)}">${phoneIcon} ${esc(shop.phone)}</a>`);
     if (shop.social && shop.social.instagram) tb.push(`<a href="${esc(shop.social.instagram)}" target="_blank" rel="noopener" aria-label="Instagram">${igIcon(16)} @proxiedtcgs</a>`);
     $('#topbar').innerHTML = tb.join('');
     $('.topbar').hidden = !tb.length;
+  }
+  async function renderCommunity() {
+    let pics = [];
+    try { pics = (await Store.listPhotos('community')).map(p => p.image_url); } catch (e) {}
+    $('#community-soon').hidden = !!pics.length;
+    $('#community-gallery').innerHTML = pics.map((p, i) => `<button class="shot" data-pic="${esc(p)}" aria-label="View community photo ${i + 1}"><img src="${esc(p)}" alt="Proxied community, photo ${i + 1}" loading="lazy"></button>`).join('');
   }
   async function renderGallery() {
     let pics = (shop.gallery || []).slice();
@@ -183,6 +191,7 @@
   /* ---------- init ---------- */
   renderStatic();
   renderGallery();
+  renderCommunity();
   reveal();
   (async function () {
     try { events = await Store.list(false); (await Store.listGames()).forEach(g => games[g.id] = g); }

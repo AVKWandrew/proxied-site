@@ -53,31 +53,39 @@
     try { await Store.removeGame(b.dataset.g); await refreshGames(); await refresh(); } catch (e) { alert(e.message); }
   });
 
+  const PHOTO_SETS = [
+    { kind: 'shop', grid: '#photos', form: '#photo-form', input: '#p-img', err: '#photo-err', btn: '#p-save' },
+    { kind: 'community', grid: '#cphotos', form: '#cphoto-form', input: '#cp-img', err: '#cphoto-err', btn: '#cp-save' }
+  ];
   async function refreshPhotos() {
-    const photos = await Store.listPhotos();
-    $('#photos').innerHTML = photos.length ? photos.map(p => `
-      <div style="position:relative"><img src="${esc(p.image_url)}" alt="" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block">
-      <button class="btn danger sm" data-p="${esc(p.id)}" style="position:absolute;right:4px;bottom:4px;padding:.2rem .6rem">Delete</button></div>`).join('')
-      : '<p class="muted" style="grid-column:1/-1;margin:0">No photos yet.</p>';
+    for (const s of PHOTO_SETS) {
+      const photos = await Store.listPhotos(s.kind);
+      $(s.grid).innerHTML = photos.length ? photos.map(p => `
+        <div style="position:relative"><img src="${esc(p.image_url)}" alt="" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block">
+        <button class="btn danger sm" data-p="${esc(p.id)}" style="position:absolute;right:4px;bottom:4px;padding:.2rem .6rem">Delete</button></div>`).join('')
+        : '<p class="muted" style="grid-column:1/-1;margin:0">No photos yet.</p>';
+    }
     if (!$('#cal-panel').hidden) reloadCal();
   }
-  $('#photo-form').addEventListener('submit', async (ev) => {
-    ev.preventDefault(); const err = $('#photo-err'); err.textContent = '';
-    const btn = $('#p-save'); btn.disabled = true; btn.textContent = 'Uploading…';
-    try {
-      for (const f of $('#p-img').files) {
-        if (f.size > 8 * 1024 * 1024) throw new Error(f.name + ' is over 8 MB — please use a smaller photo.');
-        await Store.addPhoto(await Store.uploadImage(f));
-      }
-      $('#photo-form').reset(); await refreshPhotos();
-    } catch (e) { err.textContent = e.message || 'Could not upload.'; await refreshPhotos(); }
-    btn.disabled = false; btn.textContent = '+ Upload photos';
-  });
-  $('#photos').addEventListener('click', async (ev) => {
-    const b = ev.target.closest('button[data-p]'); if (!b) return;
-    if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Confirm?'; setTimeout(() => { b.dataset.armed = ''; b.textContent = 'Delete'; }, 4000); return; }
-    try { await Store.removePhoto(b.dataset.p); await refreshPhotos(); } catch (e) { alert(e.message); }
-  });
+  for (const s of PHOTO_SETS) {
+    $(s.form).addEventListener('submit', async (ev) => {
+      ev.preventDefault(); const err = $(s.err); err.textContent = '';
+      const btn = $(s.btn); btn.disabled = true; btn.textContent = 'Uploading…';
+      try {
+        for (const f of $(s.input).files) {
+          if (f.size > 8 * 1024 * 1024) throw new Error(f.name + ' is over 8 MB — please use a smaller photo.');
+          await Store.addPhoto(await Store.uploadImage(f), s.kind);
+        }
+        $(s.form).reset(); await refreshPhotos();
+      } catch (e) { err.textContent = e.message || 'Could not upload.'; await refreshPhotos(); }
+      btn.disabled = false; btn.textContent = '+ Upload photos';
+    });
+    $(s.grid).addEventListener('click', async (ev) => {
+      const b = ev.target.closest('button[data-p]'); if (!b) return;
+      if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Confirm?'; setTimeout(() => { b.dataset.armed = ''; b.textContent = 'Delete'; }, 4000); return; }
+      try { await Store.removePhoto(b.dataset.p); await refreshPhotos(); } catch (e) { alert(e.message); }
+    });
+  }
 
   async function refresh() {
     try { events = await Store.list(true); } catch (e) { $('#list').innerHTML = `<p class="err">Could not load events: ${esc(e.message)}</p>`; return; }

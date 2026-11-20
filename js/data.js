@@ -62,15 +62,19 @@
 
   window.Store = {
     live,
-    async listPhotos() {
-      if (!live) return photosLoad();
-      const { data, error } = await sb.from('photos').select('*').order('created_at');
-      if (error) { console.warn(error); return []; }
-      return data;
+    async listPhotos(kind = 'shop') {
+      let rows;
+      if (!live) rows = photosLoad();
+      else {
+        const { data, error } = await sb.from('photos').select('*').order('created_at');
+        if (error) { console.warn(error); return []; }
+        rows = data;
+      }
+      return rows.filter(p => (p.kind || 'shop') === kind);
     },
-    async addPhoto(image_url) {
-      if (!live) { const v = photosLoad(); v.push({ id: 'p' + Date.now() + Math.random().toString(36).slice(2, 5), image_url }); photosSave(v); return; }
-      const { error } = await sb.from('photos').insert({ image_url });
+    async addPhoto(image_url, kind = 'shop') {
+      if (!live) { const v = photosLoad(); v.push({ id: 'p' + Date.now() + Math.random().toString(36).slice(2, 5), image_url, kind }); photosSave(v); return; }
+      const { error } = await sb.from('photos').insert(kind === 'shop' ? { image_url } : { image_url, kind });
       if (error) throw error;
     },
     async removePhoto(id) {
