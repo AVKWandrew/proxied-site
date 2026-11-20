@@ -8,9 +8,38 @@
     try { s = await Store.session(); } catch (e) {}
     if (s) showDash(); else { $('#login').hidden = false; $('#dash').hidden = true; }
   }
+  async function loadSettings() {
+    const s = await Store.getSettings(), b = s.banner || {};
+    $('#b-text').value = b.text || ''; $('#b-until').value = b.until || ''; $('#b-on').checked = !!b.on;
+    $('#banner-state').textContent = b.on && b.text ? 'On' : 'Off'; $('#banner-state').className = 'badge' + (b.on && b.text ? '' : ' off');
+    const days = Array.isArray(s.hours_days) && s.hours_days.length === 7 ? s.hours_days : PROXIED.shop.hoursDays;
+    $('#hours-rows').innerHTML = PX.DAYS.map((n, i) => { const d = days[i] || {}; return `<div class="hrow${d.closed ? ' off' : ''}" data-i="${i}">
+      <b>${n}</b><input type="time" class="o" value="${d.open || '12:00'}" aria-label="${n} opens"><input type="time" class="c" value="${d.close || '20:00'}" aria-label="${n} closes">
+      <label class="cl"><input type="checkbox" class="x" ${d.closed ? 'checked' : ''}> Closed</label></div>`; }).join('');
+  }
+  $('#banner-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault(); const err = $('#banner-err'); err.textContent = '';
+    try {
+      await Store.saveSetting('banner', { text: $('#b-text').value.trim(), until: $('#b-until').value || '', on: $('#b-on').checked });
+      await loadSettings(); err.textContent = 'Saved ✓'; err.style.color = 'var(--cyan)'; setTimeout(() => { err.textContent = ''; err.style.color = ''; }, 2500);
+    } catch (e) { err.textContent = e.message || 'Could not save.'; }
+  });
+  $('#hours-rows').addEventListener('change', (ev) => { const r = ev.target.closest('.hrow'); if (r) r.classList.toggle('off', r.querySelector('.x').checked); });
+  $('#hours-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault(); const err = $('#hours-err'); err.textContent = '';
+    try {
+      const days = [...document.querySelectorAll('#hours-rows .hrow')].map(r => ({ closed: r.querySelector('.x').checked, open: r.querySelector('.o').value, close: r.querySelector('.c').value }));
+      const bad = days.findIndex(d => !d.closed && (!d.open || !d.close || d.close <= d.open));
+      if (bad >= 0) throw new Error(PX.DAYS[bad] + ': closing time must be after opening time.');
+      await Store.saveSetting('hours_days', days);
+      await loadSettings(); err.textContent = 'Saved ✓'; err.style.color = 'var(--cyan)'; setTimeout(() => { err.textContent = ''; err.style.color = ''; }, 2500);
+    } catch (e) { err.textContent = e.message || 'Could not save.'; }
+  });
+
   async function showDash() {
     $('#login').hidden = true; $('#dash').hidden = false;
     $('#demo-banner').hidden = Store.live;
+    await loadSettings();
     await refreshGames();
     await refreshPhotos();
     await refresh();

@@ -1,5 +1,5 @@
 (function () {
-  const { esc, parts, midnight, keyOf, time, dateLong, dateShort, occurrences, timeRange, placeholder, DAY } = PX;
+  const { esc, parts, midnight, keyOf, time, dateLong, dateShort, occurrences, timeRange, placeholder, DAY, hoursGroups, openNow } = PX;
   const shop = PROXIED.shop;
   const $ = (s) => document.querySelector(s);
   const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -41,7 +41,7 @@
     }
     const blocks = [];
     if (shop.address && shop.mapsUrl) blocks.push(`<div class="info"><h3>Directions</h3><p>${esc(shop.address)}</p><p><a href="${esc(shop.mapsUrl)}" target="_blank" rel="noopener">Open in Maps →</a></p></div>`);
-    if (shop.hours && shop.hours.length) blocks.push(`<div class="info"><h3>Hours</h3><ul>${shop.hours.map(h => `<li><span>${esc(h[0])}</span><span>${esc(h[1])}</span></li>`).join('')}</ul></div>`);
+    blocks.push('<div class="info" id="hours-info" hidden></div>');
     if (shop.phone || shop.email) blocks.push(`<div class="info"><h3>Contact</h3><p>${shop.phone ? `<a href="tel:${esc(shop.phone)}">${esc(shop.phone)}</a><br>` : ''}${shop.email ? `<a href="mailto:${esc(shop.email)}">${esc(shop.email)}</a>` : ''}</p></div>`);
     const soc = Object.entries(shop.social || {}).filter(([, v]) => v);
     if (soc.length) blocks.push(`<div class="info"><h3>Follow</h3><div class="socials">${soc.map(([k, v]) => k === 'instagram'
@@ -188,8 +188,32 @@
     art.addEventListener('pointerleave', () => { fx.style.setProperty('--ry', '0deg'); fx.style.setProperty('--rx', '0deg'); });
   })();
 
+  /* ---------- banner + hours (editable in admin) ---------- */
+  const azToday = () => new Date(Date.now() - 7 * 3600e3).toISOString().slice(0, 10);
+  function renderHours(days) {
+    const el = $('#hours-info'); if (!el) return;
+    const ok = Array.isArray(days) && days.length === 7;
+    el.hidden = !ok; if (!ok) return;
+    const open = openNow(days);
+    el.innerHTML = `<h3>Hours <span class="now ${open ? 'on' : ''}">${open ? 'Open now' : 'Closed now'}</span></h3><ul>${hoursGroups(days).map(h => `<li><span>${esc(h[0])}</span><span>${esc(h[1])}</span></li>`).join('')}</ul><p class="tz">Arizona time</p>`;
+  }
+  async function applySettings() {
+    let s = {}; try { s = await Store.getSettings(); } catch (e) {}
+    const b = s.banner;
+    if (b && b.on && b.text && !(b.until && b.until < azToday())) {
+      let gone = false; try { gone = sessionStorage.getItem('px_ann') === b.text; } catch (e) {}
+      if (!gone) {
+        $('#announce-text').textContent = b.text; $('#announce').hidden = false;
+        $('#announce-x').onclick = () => { $('#announce').hidden = true; try { sessionStorage.setItem('px_ann', b.text); } catch (e) {} };
+      }
+    }
+    if (Array.isArray(s.hours_days)) renderHours(s.hours_days);
+  }
+
   /* ---------- init ---------- */
   renderStatic();
+  renderHours(shop.hoursDays);
+  applySettings();
   renderGallery();
   renderCommunity();
   reveal();

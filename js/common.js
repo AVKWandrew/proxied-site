@@ -32,5 +32,31 @@ window.PX = (function () {
   const toLocalInput = (iso) => { if (!iso) return ''; return new Date(Date.parse(iso) - OFF).toISOString().slice(0, 16); };
   const fromLocalInput = (v) => v ? new Date(v + ':00-07:00').toISOString() : null;
 
-  return { TZ, OFF, DAY, WEEK, esc, parts, midnight, keyOf, fmt, time, dateLong, dateShort, occurrences, timeRange, placeholder, toLocalInput, fromLocalInput };
+  // Store hours: days[0..6] = Mon..Sun, each { closed, open:'HH:MM', close:'HH:MM' }
+  const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const D3 = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const hm = (v) => { const [h, m] = v.split(':').map(Number); return { h, m, ap: h >= 12 ? 'PM' : 'AM', t: ((h + 11) % 12 + 1) + (m ? ':' + String(m).padStart(2, '0') : '') }; };
+  const hoursText = (d) => {
+    if (!d || d.closed || !d.open || !d.close) return 'Closed';
+    const a = hm(d.open), b = hm(d.close);
+    return a.ap === b.ap ? `${a.t} – ${b.t} ${b.ap}` : `${a.t} ${a.ap} – ${b.t} ${b.ap}`;
+  };
+  // collapse consecutive days with the same hours: [['Tue – Fri','2 – 9 PM'], ...]
+  const hoursGroups = (days) => {
+    const out = [];
+    for (let i = 0; i < 7; i++) {
+      const t = hoursText(days[i]), last = out[out.length - 1];
+      if (last && last.t === t) last.to = i; else out.push({ from: i, to: i, t });
+    }
+    return out.map(g => [g.from === g.to ? D3[g.from] : g.to - g.from === 1 ? `${D3[g.from]} & ${D3[g.to]}` : `${D3[g.from]} – ${D3[g.to]}`, g.t]);
+  };
+  // is the shop open right now (Arizona time)?
+  const openNow = (days) => {
+    const p = new Date(Date.now() - OFF), dow = (p.getUTCDay() + 6) % 7, d = days[dow];
+    if (!d || d.closed || !d.open || !d.close) return false;
+    const mins = p.getUTCHours() * 60 + p.getUTCMinutes(), f = (v) => { const [h, m] = v.split(':').map(Number); return h * 60 + m; };
+    return mins >= f(d.open) && mins < f(d.close);
+  };
+
+  return { DAYS, D3, hoursText, hoursGroups, openNow, TZ, OFF, DAY, WEEK, esc, parts, midnight, keyOf, fmt, time, dateLong, dateShort, occurrences, timeRange, placeholder, toLocalInput, fromLocalInput };
 })();

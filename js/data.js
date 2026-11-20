@@ -60,8 +60,22 @@
   };
   const photosSave = (v) => { try { localStorage.setItem(PHOTOS_KEY, JSON.stringify(v)); } catch (e) {} };
 
+  const SET_KEY = 'proxied_demo_settings_v1';
+  const setLoad = () => { try { return JSON.parse(localStorage.getItem(SET_KEY)) || {}; } catch (e) { return {}; } };
+
   window.Store = {
     live,
+    async getSettings() {
+      if (!live) return setLoad();
+      const { data, error } = await sb.from('site_settings').select('key,value');
+      if (error) { console.warn(error); return {}; }
+      const o = {}; data.forEach(r => o[r.key] = r.value); return o;
+    },
+    async saveSetting(key, value) {
+      if (!live) { const o = setLoad(); o[key] = value; try { localStorage.setItem(SET_KEY, JSON.stringify(o)); } catch (e) {} return; }
+      const { error } = await sb.from('site_settings').upsert({ key, value, updated_at: new Date().toISOString() });
+      if (error) throw error;
+    },
     async listPhotos(kind = 'shop') {
       let rows;
       if (!live) rows = photosLoad();

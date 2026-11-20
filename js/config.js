@@ -24,10 +24,15 @@ window.PROXIED = {
     mapsUrl: 'https://www.google.com/maps/search/?api=1&query=6610+E+Baseline+Rd+Ste+107+Mesa+AZ+85206',
     phone: '(480) 647-6657',
     email: 'customersupport@proxiedllc.com',
-    hours: [            // [label, hours] — leave the list empty to hide
-      // ['Mon – Thu', '12pm – 9pm'],
-      // ['Fri – Sat', '12pm – 11pm'],
-      // ['Sun', '12pm – 6pm'],
+    // Opening hours, Monday to Sunday. These are the defaults; the owner can change them in the admin (Store hours).
+    hoursDays: [
+      { closed: true },
+      { open: '14:00', close: '21:00' },
+      { open: '14:00', close: '21:00' },
+      { open: '14:00', close: '21:00' },
+      { open: '14:00', close: '21:00' },
+      { open: '12:00', close: '20:00' },
+      { open: '12:00', close: '20:00' }
     ],
     social: {           // full links; empty = hidden
       instagram: 'https://www.instagram.com/proxiedtcgs/',
