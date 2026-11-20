@@ -42,7 +42,7 @@
     const blocks = [];
     if (shop.address && shop.mapsUrl) blocks.push(`<div class="info"><h3>Directions</h3><p>${esc(shop.address)}</p><p><a href="${esc(shop.mapsUrl)}" target="_blank" rel="noopener">Open in Maps →</a></p></div>`);
     blocks.push('<div class="info" id="hours-info" hidden></div>');
-    if (shop.phone || shop.email) blocks.push(`<div class="info"><h3>Contact</h3><p>${shop.phone ? `<a href="tel:${esc(shop.phone)}">${esc(shop.phone)}</a><br>` : ''}${shop.email ? `<a href="mailto:${esc(shop.email)}">${esc(shop.email)}</a>` : ''}</p></div>`);
+    if (shop.phone || shop.email) blocks.push(`<div class="info"><h3>Contact</h3><p>${shop.phone ? `<a href="tel:${esc(shop.phone)}">${esc(shop.phone)}</a><br>` : ''}${shop.email ? `<a class="mail" href="mailto:${esc(shop.email)}">${esc(shop.email)}</a>` : ''}</p></div>`);
     const soc = Object.entries(shop.social || {}).filter(([, v]) => v);
     if (soc.length) blocks.push(`<div class="info"><h3>Follow</h3><div class="socials">${soc.map(([k, v]) => k === 'instagram'
       ? `<a class="ig-link" href="${esc(v)}" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">${igIcon(40)}</a>`
