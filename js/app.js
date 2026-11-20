@@ -212,7 +212,10 @@
         $('#announce-x').onclick = () => { $('#announce').hidden = true; try { sessionStorage.setItem('px_ann', b.text); } catch (e) {} };
       }
     }
-    $('#community-soon').hidden = s.community_soon === false;   // on by default; the owner can switch it off in the admin
+    // Community Corner label: shows "Coming soon" by default; the owner can change the wording or hide it in the admin
+    const cl = s.community_label || { on: s.community_soon !== false, text: 'Coming soon' };
+    $('#community-soon').textContent = cl.text || '';
+    $('#community-soon').hidden = !cl.on || !(cl.text || '').trim();
     if (Array.isArray(s.hours_days)) renderHours(s.hours_days);
   }
 
