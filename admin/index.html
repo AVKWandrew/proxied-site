@@ -26,6 +26,11 @@
   .badge{font-family:var(--sub);letter-spacing:.1em;font-size:.85rem;padding:.05rem .6rem;border-radius:999px;background:var(--cyan);color:#111;margin-left:.4rem}
   .badge.off{background:#777;color:#fff}
   .actions{display:flex;gap:.4rem;flex-wrap:wrap}
+  .hrow{display:grid;grid-template-columns:6.5rem 1fr 1fr auto;gap:.5rem;align-items:center;margin-bottom:.45rem}
+  .hrow input[type=time]{padding:.45rem .6rem}
+  .hrow label.cl{display:flex;gap:.35rem;align-items:center;margin:0;font-size:.9rem;white-space:nowrap}
+  .hrow label.cl input{width:auto}
+  .hrow.off input[type=time]{opacity:.35}
   .banner{background:#5a4a12;color:#ffe9a6;border-radius:10px;padding:.7rem 1rem;margin-bottom:1rem}
   .err{color:#ff8d8d;margin:.6rem 0 0;min-height:1.2em}
   .preview{max-height:140px;border-radius:10px;margin-top:.5rem}
@@ -60,6 +65,26 @@
 
     <div class="layout" id="manage-panel">
       <div>
+        <details class="box" style="margin-bottom:1rem" id="banner-box">
+          <summary style="cursor:pointer;font-family:var(--head);font-weight:700;text-transform:uppercase">📣 Site banner <span class="badge off" id="banner-state">Off</span></summary>
+          <p class="muted" style="margin:.6rem 0;font-size:.9rem">A strip across the very top of the site for sales and announcements. Visitors can dismiss it.</p>
+          <form id="banner-form">
+            <label for="b-text">Message</label><input id="b-text" maxlength="160" placeholder="Black Friday: 10% off all sealed product, Nov 28">
+            <label for="b-until">Hide automatically after (optional)</label><input id="b-until" type="date">
+            <label style="display:flex;gap:.5rem;align-items:center;margin-top:.8rem"><input id="b-on" type="checkbox" style="width:auto"> Show banner on the site</label>
+            <p class="err" id="banner-err"></p>
+            <button class="btn sm">Save banner</button>
+          </form>
+        </details>
+        <details class="box" style="margin-bottom:1rem" id="hours-box">
+          <summary style="cursor:pointer;font-family:var(--head);font-weight:700;text-transform:uppercase">🕒 Store hours</summary>
+          <p class="muted" style="margin:.6rem 0;font-size:.9rem">Set the opening and closing time for each day, or tick Closed. The site groups matching days automatically (for example “Tue – Fri”) and shows an Open now badge. Arizona time.</p>
+          <form id="hours-form">
+            <div id="hours-rows"></div>
+            <p class="err" id="hours-err"></p>
+            <button class="btn sm">Save hours</button>
+          </form>
+        </details>
         <button class="btn" id="new" style="margin-bottom:1rem">+ New event</button>
         <div id="list"></div>
 
