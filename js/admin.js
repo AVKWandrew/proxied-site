@@ -11,12 +11,19 @@
   async function loadSettings() {
     const s = await Store.getSettings(), b = s.banner || {};
     $('#b-text').value = b.text || ''; $('#b-until').value = b.until || ''; $('#b-on').checked = !!b.on;
+    $('#c-soon').checked = s.community_soon !== false;
     $('#banner-state').textContent = b.on && b.text ? 'On' : 'Off'; $('#banner-state').className = 'badge' + (b.on && b.text ? '' : ' off');
     const days = Array.isArray(s.hours_days) && s.hours_days.length === 7 ? s.hours_days : PROXIED.shop.hoursDays;
     $('#hours-rows').innerHTML = PX.DAYS.map((n, i) => { const d = days[i] || {}; return `<div class="hrow${d.closed ? ' off' : ''}" data-i="${i}">
       <b>${n}</b><input type="time" class="o" value="${d.open || '12:00'}" aria-label="${n} opens"><input type="time" class="c" value="${d.close || '20:00'}" aria-label="${n} closes">
       <label class="cl"><input type="checkbox" class="x" ${d.closed ? 'checked' : ''}> Closed</label></div>`; }).join('');
   }
+  $('#c-soon').addEventListener('change', async () => {
+    const m = $('#c-soon-msg'), box = $('#c-soon');
+    try { await Store.saveSetting('community_soon', box.checked); m.textContent = box.checked ? '— showing' : '— hidden'; }
+    catch (e) { box.checked = !box.checked; m.textContent = '— could not save'; }
+    setTimeout(() => { m.textContent = ''; }, 2500);
+  });
   $('#banner-form').addEventListener('submit', async (ev) => {
     ev.preventDefault(); const err = $('#banner-err'); err.textContent = '';
     try {

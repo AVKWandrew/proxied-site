@@ -63,7 +63,6 @@
   async function renderCommunity() {
     let pics = [];
     try { pics = (await Store.listPhotos('community')).map(p => p.image_url); } catch (e) {}
-    $('#community-soon').hidden = !!pics.length;
     $('#community-gallery').innerHTML = pics.map((p, i) => `<button class="shot" data-pic="${esc(p)}" aria-label="View community photo ${i + 1}"><img src="${esc(p)}" alt="Proxied community, photo ${i + 1}" loading="lazy"></button>`).join('');
   }
   async function renderGallery() {
@@ -213,6 +212,7 @@
         $('#announce-x').onclick = () => { $('#announce').hidden = true; try { sessionStorage.setItem('px_ann', b.text); } catch (e) {} };
       }
     }
+    $('#community-soon').hidden = s.community_soon === false;   // on by default; the owner can switch it off in the admin
     if (Array.isArray(s.hours_days)) renderHours(s.hours_days);
   }
 
