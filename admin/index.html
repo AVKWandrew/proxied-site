@@ -85,6 +85,17 @@
             <button class="btn sm" id="p-save">+ Upload photos</button>
           </form>
         </div>
+
+        <div class="box" style="margin-top:1.5rem">
+          <h3 style="font-size:1.2rem">Community Corner photos</h3>
+          <p class="muted" style="margin:0 0 .8rem;font-size:.9rem">Photos shown in the Community Corner section (tournaments, game nights, regulars). You can pick several at once.</p>
+          <div id="cphotos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:.6rem"></div>
+          <form id="cphoto-form" style="margin-top:.8rem">
+            <input id="cp-img" type="file" accept="image/*" multiple required>
+            <p class="err" id="cphoto-err"></p>
+            <button class="btn sm" id="cp-save">+ Upload photos</button>
+          </form>
+        </div>
       </div>
 
       <form class="box" id="form">
