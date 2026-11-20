@@ -45,6 +45,7 @@ create table if not exists public.photos (
   image_url  text not null,
   created_at timestamptz not null default now()
 );
+alter table public.photos add column if not exists kind text not null default 'shop';  -- 'shop' | 'community'
 alter table public.photos enable row level security;
 create policy "public can read photos" on public.photos for select using (true);
 create policy "admins manage photos" on public.photos for all to authenticated using (true) with check (true);
