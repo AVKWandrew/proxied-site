@@ -277,3 +277,30 @@ footer .foot-email a:hover{border-bottom-color:var(--cyan)}
 footer .foot-email + p{margin-top:.6rem}
 .community .gallery{margin-top:3rem;text-align:left}
 .community .gallery:empty{display:none}
+
+/* ---------- announcement banner ---------- */
+.announce{background:var(--cyan);color:#10151a;font-weight:700;text-align:center;font-size:.98rem;letter-spacing:.01em}
+.announce[hidden]{display:none}
+.announce .wrap{display:flex;justify-content:center;align-items:center;gap:.8rem;padding-block:.55rem;position:relative}
+.announce #announce-text{padding-inline:1.6rem}
+.announce button{position:absolute;right:.6rem;top:50%;transform:translateY(-50%);background:none;border:0;color:inherit;font-size:1.5rem;line-height:1;cursor:pointer;padding:.2rem .5rem;opacity:.7}
+.announce button:hover{opacity:1}
+
+.info .now{font:.85rem var(--sub);letter-spacing:.12em;margin-left:.5rem;padding:.1rem .6rem;border-radius:999px;background:rgba(255,255,255,.12);color:var(--muted);vertical-align:middle}
+.info .now.on{background:var(--cyan);color:#10151a}
+.info .tz{font-size:.8rem;margin-top:.6rem;opacity:.7}
+.info[hidden]{display:none}
+.info a{overflow-wrap:anywhere}
+
+/* crawler */
+.announce .wrap{width:100%;max-width:none;padding-inline:0;overflow:hidden}
+.announce #announce-text{display:block;width:100%;padding:0;overflow:hidden}
+.crawl{display:flex;width:max-content;animation:crawl var(--dur,30s) linear infinite}
+.announce:hover .crawl{animation-play-state:paused}
+.c-half{display:flex;flex:none;align-items:center}
+.c-item{white-space:nowrap;padding-inline:1.2rem;text-transform:uppercase;letter-spacing:.06em}
+.c-dot{opacity:.65}
+@keyframes crawl{to{transform:translateX(-50%)}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.announce button{z-index:2;background:var(--cyan);box-shadow:-14px 0 12px var(--cyan);padding-left:.6rem}
+@media (prefers-reduced-motion:reduce){.crawl{animation:none;width:100%;justify-content:center}.c-half+.c-half,.c-dot{display:none}.c-item{white-space:normal;text-align:center}}
